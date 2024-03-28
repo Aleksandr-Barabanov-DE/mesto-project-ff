@@ -1,7 +1,9 @@
 import './styles/index.css';
 
-import { initialCards, createCard, deleteCard, addNewCard} from './components/cards.js';
+import { initialCards} from './components/cards.js';
 import {openPopup, openPopupCard, closePopup, overlayClickHandler, closePopupOnEsc} from './components/modal.js';
+import { createCard, deleteCard, addNewCard} from './components/card.js';
+
 
 // Выводим все карточки из массива на страницу
 const placesList = document.querySelector('.places__list');
@@ -22,14 +24,14 @@ const openCardImage = document.querySelectorAll('.card__image');
 const closePopupButton = document.querySelectorAll('.popup__close');
 
 // Выделяем три разных Popup
-const editPopup = document.querySelector('.popup_type_edit');
+const popupEditProfile = document.querySelector('.popup_type_edit');
 const addCardPopup = document.querySelector('.popup_type_new-card');
 const currentCardPopup = document.querySelector('.popup_type_image');
 
 // Запуск механизмов открытия 
 editProfileButton.addEventListener('click', function() {
   // В качестве аргумента нужный Popup
-  openPopup(editPopup);
+  openPopup(popupEditProfile);
 });
 
 addNewCardButton.addEventListener('click', function() {
@@ -69,9 +71,6 @@ popupContents.forEach(function(content) {
   });
 });
 
-// Добавляем обработчик события keydown для всего документа
-document.addEventListener('keydown', closePopupOnEsc);
-
 // Редактирование Ииени и информации о себе 
  
 // Находим форму Popup в DOM 
@@ -96,7 +95,7 @@ setDefaultValues();
 
 // Обработчик «отправки» формы
 
-function handleFormSubmit(evt) {
+function submitFormEditProfile(evt) {
     evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы.
    
     // значение полей jobInput и nameInput из свойства value это строчки которые в форме попап мы заполняем новые 
@@ -111,11 +110,19 @@ function handleFormSubmit(evt) {
     nameInputDestination.textContent = nameInputValue;
     jobInputDestination.textContent = jobInputValue; 
 
+    // Закрываем модальное окно
+    closePopup(popupEditProfile);
+
 }
 
 // Прикрепляем обработчик к форме:
 // он будет следить за событием “submit” - «отправка»
-formElement.addEventListener('submit', handleFormSubmit); 
+formElement.addEventListener('submit', submitFormEditProfile); 
 
 // добавление новой карточки
 addCardPopup.addEventListener('submit', addNewCard); 
+
+window.addEventListener('keydown', function(event) {
+  closePopupOnEsc(event); // Вызываем функцию обработки нажатия клавиши ESC для закрытия модальных окон
+});
+

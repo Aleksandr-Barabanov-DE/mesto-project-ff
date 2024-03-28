@@ -1,13 +1,9 @@
 // Механизм открытия Popup редактора и добавления карточки
 export function openPopup(popup) {
-  setTimeout(() => {
-      popup.classList.add('popup_is-animated');
-  }, 10); // Добавляем небольшую задержку перед добавлением класса popup_is-animated
-  // Добавляем небольшую задержку перед добавлением класса popup_is-opened
-  // чтобы анимация успела загрузиться
-  setTimeout(() => {
-      popup.classList.add('popup_is-opened');
-  }, 100); 
+  popup.classList.add('popup_is-animated', 'popup_is-opened');
+  // Добавляем обработчик события keydown для всего документа при открытии попапа
+  document.addEventListener('keydown', closePopupOnEsc);
+
 }
 
 // Механизм Открытие popup карточек 
@@ -20,19 +16,14 @@ export function openPopupCard(popup, imageUrl, captionText) {
   popupImage.alt = captionText;
   popupCaption.textContent = captionText;
 
-  setTimeout(() => {
-    popup.classList.add('popup_is-animated');
-}, 10); // Добавляем небольшую задержку перед добавлением класса popup_is-animated
-// Добавляем небольшую задержку перед добавлением класса popup_is-opened
-// чтобы анимация успела загрузиться
-setTimeout(() => {
-    popup.classList.add('popup_is-opened');
-}, 100); 
+  openPopup(popup);
 }
 
 //Механизм закрытия 
 export function closePopup(popup) {
   popup.classList.remove('popup_is-opened');
+   // Удаляем обработчик события keydown для всего документа при закрытии попапа
+   document.removeEventListener('keydown', closePopupOnEsc);
 }
 
 // Обработчик клика на оверлей
