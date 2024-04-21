@@ -35,15 +35,6 @@ addNewCardButton.addEventListener("click", function () {
   openPopup(addCardPopup);
 });
 
-//Отдельный механизм для карточек с перебором так как много их
-openCardImage.forEach(function (image) {
-  image.addEventListener("click", function () {
-    const imageUrl = image.src;
-    const captionText = image.alt;
-    openPopupCard(currentCardPopup, imageUrl, captionText);
-  });
-});
-
 // Реализуем функцию закрытия любого popup
 closePopupButton.forEach(function (closeButton) {
   closeButton.addEventListener("click", function () {
@@ -66,6 +57,11 @@ popupContents.forEach(function (content) {
     event.stopPropagation();
   });
 });
+
+// Функция для открытия модального окна с изображением и названием карточки
+export function openCardModal(imageUrl, captionText) {
+  openPopupCard(currentCardPopup, imageUrl, captionText);
+}
 
 // Редактирование Ииени и информации о себе
 
@@ -109,9 +105,10 @@ function submitFormEditProfile(evt) {
   closePopup(popupEditProfile);
 }
 
+const formEditProfile = document.querySelector(".form_edit_profile");
 // Прикрепляем обработчик к форме:
 // он будет следить за событием “submit” - «отправка»
-formElement.addEventListener("submit", submitFormEditProfile);
+formEditProfile.addEventListener("submit", submitFormEditProfile);
 
 // добавление новой карточки
 addCardPopup.addEventListener("submit", addNewCard);

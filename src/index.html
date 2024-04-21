@@ -53,7 +53,11 @@
         <div class="popup__content">
           <button type="button" class="popup__close"></button>
           <h3 class="popup__title">Редактировать профиль</h3>
-          <form class="popup__form" name="edit-profile" novalidate>
+          <form
+            class="popup__form form_edit_profile"
+            name="edit-profile"
+            novalidate
+          >
             <input
               id="popup__input_type_name"
               type="text"
@@ -82,7 +86,10 @@
             <span
               class="form__input-error popup__input_type_description-error"
             ></span>
-            <button type="submit" class="button popup__button save_button">
+            <button
+              type="submit"
+              class="button popup__button save_button profile__edit-button"
+            >
               Сохранить
             </button>
           </form>

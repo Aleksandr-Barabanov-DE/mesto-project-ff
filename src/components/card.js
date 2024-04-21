@@ -1,8 +1,10 @@
 import { openPopup } from "./modal.js";
+import { openPopupCard } from "./modal.js";
 import { closePopup } from "./modal.js";
 import { deleteCardFromServer } from "../index.js";
 import { likeCard } from "../index.js";
 import { removeLikeFromCard } from "../index.js";
+import { openCardModal } from "../index.js";
 
 export function handleLikeButtonClick(likeButton) {
   likeButton.classList.toggle("card__like-button_is-active");
@@ -62,7 +64,8 @@ export function createCard(
 
   // Добавляем обработчик клика на изображение
   cardImage.addEventListener("click", function () {
-    imageClickCallback(data.link, data.name);
+    // Вызываем функцию для открытия модального окна с изображением и названием
+    openCardModal(data.link, data.name);
   });
 
   // Добавляем обработчик клика на кнопку "лайк"
