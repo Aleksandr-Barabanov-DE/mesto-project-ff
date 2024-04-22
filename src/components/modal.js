@@ -35,7 +35,7 @@ export function overlayClickHandler(event) {
 // Функция Зарытия Модальных окон при нажатии клавиши ESC
 export function closePopupOnEsc(event) {
   if (event.key === "Escape") {
-    const openedPopups = document.querySelector(".popup_is-opened");
+    const openedPopups = document.querySelectorAll(".popup_is-opened");
     openedPopups.forEach(function (popup) {
       closePopup(popup);
     });
