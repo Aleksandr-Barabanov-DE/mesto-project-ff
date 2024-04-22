@@ -5,19 +5,6 @@ export function openPopup(popup) {
   document.addEventListener("keydown", closePopupOnEsc);
 }
 
-// Механизм Открытие popup карточек
-export function openPopupCard(popup, imageUrl, captionText) {
-  const popupImage = popup.querySelector(".popup__image");
-  const popupCaption = popup.querySelector(".popup__caption");
-
-  // Устанавливаем src изображения и текст подписи
-  popupImage.src = imageUrl;
-  popupImage.alt = captionText;
-  popupCaption.textContent = captionText;
-
-  openPopup(popup);
-}
-
 //Механизм закрытия
 export function closePopup(popup) {
   popup.classList.remove("popup_is-opened");
@@ -35,7 +22,7 @@ export function overlayClickHandler(event) {
 // Функция Зарытия Модальных окон при нажатии клавиши ESC
 export function closePopupOnEsc(event) {
   if (event.key === "Escape") {
-    const openedPopups = document.querySelectorAll(".popup_is-opened");
+    const openedPopups = document.querySelector(".popup_is-opened");
     openedPopups.forEach(function (popup) {
       closePopup(popup);
     });

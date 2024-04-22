@@ -3,12 +3,11 @@ import "./styles/index.css";
 import { initialCards } from "./components/cards.js";
 import {
   openPopup,
-  openPopupCard,
   closePopup,
   overlayClickHandler,
   closePopupOnEsc,
 } from "./components/modal.js";
-import { createCard, deleteCard, addNewCard } from "./components/card.js";
+import { createCard, deleteCard } from "./components/card.js";
 
 // Выводим все карточки из массива на страницу
 const placesList = document.querySelector(".places__list");
@@ -21,6 +20,7 @@ initialCards.forEach(function (cardData) {
 
 //МОДАЛЬНЫЕ ОКНА
 // Выбираем элементы на которых будет срабатывать клик
+const formEditProfile = document.querySelector(".form_edit-profile");
 const editProfileButton = document.querySelector(".profile__edit-button");
 const addNewCardButton = document.querySelector(".profile__add-button");
 const openCardImage = document.querySelectorAll(".card__image");
@@ -44,14 +44,22 @@ addNewCardButton.addEventListener("click", function () {
   openPopup(addCardPopup);
 });
 
-//Отдельный механизм для карточек с перебором так как много их
-openCardImage.forEach(function (image) {
-  image.addEventListener("click", function () {
-    const imageUrl = image.src;
-    const captionText = image.alt;
-    openPopupCard(currentCardPopup, imageUrl, captionText);
-  });
-});
+// Механизм Открытие popup карточек
+function openPopupCard(popup, imageUrl, captionText) {
+  const popupImage = popup.querySelector(".popup__image");
+  const popupCaption = popup.querySelector(".popup__caption");
+
+  // Устанавливаем src изображения и текст подписи
+  popupImage.src = imageUrl;
+  popupImage.alt = captionText;
+  popupCaption.textContent = captionText;
+
+  openPopup(popup);
+}
+
+export function openCardModal(imageUrl, captionText) {
+  openPopupCard(currentCardPopup, imageUrl, captionText);
+}
 
 // Реализуем функцию закрытия любого popup
 closePopupButton.forEach(function (closeButton) {
@@ -83,21 +91,34 @@ const formElement = document.querySelector(".popup__form");
 const nameInput = document.querySelector(".popup__input_type_name");
 const jobInput = document.querySelector(".popup__input_type_description");
 
-// Устанавливаем дефолтные показатели
-function setDefaultValues() {
-  // Находим элементы, куда должны быть вставлены значения полей
-  const nameInputDefault = document.querySelector(".profile__title");
-  const jobInputDefault = document.querySelector(".profile__description");
+// Функция установки значений полей формы редактирования профиля
+function setProfileFormValues(name, description) {
+  const nameInput = document.querySelector(
+    ".popup_type_edit .popup__input_type_name"
+  );
+  const descriptionInput = document.querySelector(
+    ".popup_type_edit .popup__input_type_description"
+  );
 
-  // Устанавливаем значения placeholder
-  nameInput.placeholder = nameInputDefault.textContent;
-  jobInput.placeholder = jobInputDefault.textContent;
+  // Устанавливаем значения полей формы
+  nameInput.value = name;
+  descriptionInput.value = description;
 }
 
-// Вызываем функцию
-setDefaultValues();
+// Обработчик открытия формы редактирования профиля
+editProfileButton.addEventListener("click", function () {
+  // Получаем значения имени и описания из профиля
+  const profileName = document.querySelector(".profile__title").textContent;
+  const profileDescription = document.querySelector(
+    ".profile__description"
+  ).textContent;
 
-// Обработчик «отправки» формы
+  // Устанавливаем значения полей формы
+  setProfileFormValues(profileName, profileDescription);
+
+  // Открываем модальное окно редактирования профиля
+  openPopup(popupEditProfile);
+});
 
 function submitFormEditProfile(evt) {
   evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы.
@@ -120,7 +141,7 @@ function submitFormEditProfile(evt) {
 
 // Прикрепляем обработчик к форме:
 // он будет следить за событием “submit” - «отправка»
-formElement.addEventListener("submit", submitFormEditProfile);
+formEditProfile.addEventListener("submit", submitFormEditProfile);
 
 // добавление новой карточки
 addCardPopup.addEventListener("submit", addNewCard);
@@ -128,3 +149,33 @@ addCardPopup.addEventListener("submit", addNewCard);
 window.addEventListener("keydown", function (event) {
   closePopupOnEsc(event); // Вызываем функцию обработки нажатия клавиши ESC для закрытия модальных окон
 });
+
+// ДОБАВЛЕНИЕ НОВЫХ КАРТОЧЕК
+export function addNewCard(evt) {
+  evt.preventDefault(); // Отменяем стандартное поведение формы
+
+  // Находим поля добавления карточек
+  const newCardName = document.querySelector(
+    ".popup__input_type_card-name"
+  ).value;
+  const newCardUrl = document.querySelector(".popup__input_type_url").value;
+
+  // Создаем данные для новой карточки
+  const newCardData = {
+    name: newCardName,
+    link: newCardUrl,
+  };
+
+  // Создаем новую карточку с использованием функции createCard
+  const newCardElement = createCard(newCardData, deleteCard);
+
+  // Находим контейнер для карточек
+  const placesList = document.querySelector(".places__list");
+
+  // Вставляем новую карточку в начало контейнера
+  placesList.prepend(newCardElement);
+
+  // Закрываем диалоговое окно
+  const addCardPopup = document.querySelector(".popup_type_new-card");
+  closePopup(addCardPopup);
+}
