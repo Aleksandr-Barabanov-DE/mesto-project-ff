@@ -7,19 +7,23 @@ import {
   overlayClickHandler,
   closePopupOnEsc,
 } from "./components/modal.js";
-import { createCard, deleteCard } from "./components/card.js";
+import {
+  createCard,
+  deleteCard,
+  openCardModalCallback,
+} from "./components/card.js";
 
 // Выводим все карточки из массива на страницу
 const placesList = document.querySelector(".places__list");
 
 // Проходимся по массиву карточек и создаем их
 initialCards.forEach(function (cardData) {
-  const cardElement = createCard(cardData, deleteCard);
+  const cardElement = createCard(cardData, deleteCard, openCardModal);
   placesList.appendChild(cardElement);
 });
 
 //МОДАЛЬНЫЕ ОКНА
-// Выбираем элементы на которых будет срабатывать клик
+// Выбираем элементы на которых будут срабатываться клики
 const formEditProfile = document.querySelector(".form_edit-profile");
 const editProfileButton = document.querySelector(".profile__edit-button");
 const addNewCardButton = document.querySelector(".profile__add-button");
@@ -32,12 +36,6 @@ const closePopupButton = document.querySelectorAll(".popup__close");
 const popupEditProfile = document.querySelector(".popup_type_edit");
 const addCardPopup = document.querySelector(".popup_type_new-card");
 const currentCardPopup = document.querySelector(".popup_type_image");
-
-// Запуск механизмов открытия
-editProfileButton.addEventListener("click", function () {
-  // В качестве аргумента нужный Popup
-  openPopup(popupEditProfile);
-});
 
 addNewCardButton.addEventListener("click", function () {
   // В качестве аргумента нужный Popup
@@ -87,19 +85,14 @@ popupContents.forEach(function (content) {
 // Редактирование Ииени и информации о себе
 
 // Находим форму Popup в DOM
-const formElement = document.querySelector(".popup__form");
+
 const nameInput = document.querySelector(".popup__input_type_name");
-const jobInput = document.querySelector(".popup__input_type_description");
+const descriptionInput = document.querySelector(
+  ".popup__input_type_description"
+);
 
 // Функция установки значений полей формы редактирования профиля
 function setProfileFormValues(name, description) {
-  const nameInput = document.querySelector(
-    ".popup_type_edit .popup__input_type_name"
-  );
-  const descriptionInput = document.querySelector(
-    ".popup_type_edit .popup__input_type_description"
-  );
-
   // Устанавливаем значения полей формы
   nameInput.value = name;
   descriptionInput.value = description;
@@ -146,10 +139,6 @@ formEditProfile.addEventListener("submit", submitFormEditProfile);
 // добавление новой карточки
 addCardPopup.addEventListener("submit", addNewCard);
 
-window.addEventListener("keydown", function (event) {
-  closePopupOnEsc(event); // Вызываем функцию обработки нажатия клавиши ESC для закрытия модальных окон
-});
-
 // ДОБАВЛЕНИЕ НОВЫХ КАРТОЧЕК
 export function addNewCard(evt) {
   evt.preventDefault(); // Отменяем стандартное поведение формы
@@ -168,9 +157,6 @@ export function addNewCard(evt) {
 
   // Создаем новую карточку с использованием функции createCard
   const newCardElement = createCard(newCardData, deleteCard);
-
-  // Находим контейнер для карточек
-  const placesList = document.querySelector(".places__list");
 
   // Вставляем новую карточку в начало контейнера
   placesList.prepend(newCardElement);

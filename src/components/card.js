@@ -1,17 +1,9 @@
-import { openCardModal } from "..";
-import { closePopup } from "./modal.js";
-
 export function handleLikeButtonClick(likeButton) {
   likeButton.classList.toggle("card__like-button_is-active");
 }
 
 // Функция создания карточки
-export function createCard(
-  data,
-  deleteCallback,
-  imageClickCallback,
-  openPopupCardCallback
-) {
+export function createCard(data, deleteCallback, openCardModalCallback) {
   // Клонируем шаблон карточки
   const cardTemplate = document.querySelector("#card-template");
   const cardClone = cardTemplate.content.cloneNode(true);
@@ -35,7 +27,7 @@ export function createCard(
 
   // Добавляем обработчик клика на изображение
   cardImage.addEventListener("click", function () {
-    openCardModal(data.link, data.name);
+    openCardModalCallback(data.link, data.name);
   });
 
   // Добавляем обработчик клика на кнопку "лайк"
@@ -46,7 +38,7 @@ export function createCard(
   return cardClone;
 }
 
-// Функция удаления карточки
+// Функция удаления карточек
 export function deleteCard(cardElement) {
   cardElement.remove();
 }
