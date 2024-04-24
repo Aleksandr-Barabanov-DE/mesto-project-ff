@@ -8,6 +8,7 @@ import {
   closePopupOnEsc,
 } from "./components/modal.js";
 import { createCard, deleteCard } from "./components/card.js";
+import { clearValidation, enableValidation } from "./components/validation.js";
 
 // Выводим все карточки из массива на страницу
 const placesList = document.querySelector(".places__list");
@@ -107,6 +108,9 @@ editProfileButton.addEventListener("click", function () {
 
   // Открываем модальное окно редактирования профиля
   openPopup(popupEditProfile);
+
+  // Очищаем ошибки валидации для формы профиля и делаем кнопку неактивной
+  clearValidation(formEditProfile, validationSettings);
 });
 
 function submitFormEditProfile(evt) {
@@ -163,3 +167,17 @@ export function addNewCard(evt) {
   const addCardPopup = document.querySelector(".popup_type_new-card");
   closePopup(addCardPopup);
 }
+
+//Валидация ФОРМ
+
+const validationSettings = {
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_inactive",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__error_visible",
+};
+
+// Включаем валидацию форм
+enableValidation(validationSettings);
