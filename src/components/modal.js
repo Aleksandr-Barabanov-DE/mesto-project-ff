@@ -7,12 +7,9 @@ export function openPopup(popup) {
 
 //Механизм закрытия
 export function closePopup(popup) {
-  if (popup) {
-    // Проверяем, что popup существует
-    popup.classList.remove("popup_is-opened");
-    popup.classList.remove("popup_is-animated");
-    document.removeEventListener("keydown", closePopupOnEsc);
-  }
+  popup.classList.remove("popup_is-opened");
+  popup.classList.remove("popup_is-animated");
+  document.removeEventListener("keydown", closePopupOnEsc);
 }
 
 // Обработчик клика на оверлей

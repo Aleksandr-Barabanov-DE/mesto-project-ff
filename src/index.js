@@ -7,11 +7,7 @@ import {
   overlayClickHandler,
   closePopupOnEsc,
 } from "./components/modal.js";
-import {
-  createCard,
-  deleteCard,
-  openCardModalCallback,
-} from "./components/card.js";
+import { createCard, deleteCard } from "./components/card.js";
 
 // Выводим все карточки из массива на страницу
 const placesList = document.querySelector(".places__list");
@@ -30,7 +26,7 @@ const addNewCardButton = document.querySelector(".profile__add-button");
 const openCardImage = document.querySelectorAll(".card__image");
 
 // Кнопка закрытия
-const closePopupButton = document.querySelectorAll(".popup__close");
+const buttonsClosePopup = document.querySelectorAll(".popup__close");
 
 // Выделяем три разных Popup
 const popupEditProfile = document.querySelector(".popup_type_edit");
@@ -55,12 +51,12 @@ function openPopupCard(popup, imageUrl, captionText) {
   openPopup(popup);
 }
 
-export function openCardModal(imageUrl, captionText) {
+function openCardModal(imageUrl, captionText) {
   openPopupCard(currentCardPopup, imageUrl, captionText);
 }
 
 // Реализуем функцию закрытия любого popup
-closePopupButton.forEach(function (closeButton) {
+buttonsClosePopup.forEach(function (closeButton) {
   closeButton.addEventListener("click", function () {
     // Находим попап, который нужно закрыть, используя ближайший родительский элемент с классом `.popup`
     const popup = closeButton.closest(".popup");
