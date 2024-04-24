@@ -112,17 +112,19 @@ editProfileButton.addEventListener("click", function () {
 function submitFormEditProfile(evt) {
   evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы.
 
-  // значение полей jobInput и nameInput из свойства value это строчки которые в форме попап мы заполняем новые
+  // Получаем значения полей имени и описания
   const nameInputValue = nameInput.value;
-  const jobInputValue = jobInput.value;
+  const descriptionInputValue = descriptionInput.value; // Исправленное имя переменной
 
-  // элементы, куда должны быть вставлены значения полей
+  // Находим элементы, куда нужно вставить значения
   const nameInputDestination = document.querySelector(".profile__title");
-  const jobInputDestination = document.querySelector(".profile__description");
+  const descriptionInputDestination = document.querySelector(
+    ".profile__description"
+  );
 
-  // новые значения
+  // Вставляем новые значения
   nameInputDestination.textContent = nameInputValue;
-  jobInputDestination.textContent = jobInputValue;
+  descriptionInputDestination.textContent = descriptionInputValue;
 
   // Закрываем модальное окно
   closePopup(popupEditProfile);
