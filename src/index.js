@@ -1,6 +1,5 @@
 import "./styles/index.css";
 
-import { initialCards } from "./components/cards.js";
 import {
   openPopup,
   closePopup,
@@ -9,15 +8,6 @@ import {
 } from "./components/modal.js";
 import { createCard, deleteCard } from "./components/card.js";
 import { clearValidation, enableValidation } from "./components/validation.js";
-
-// Выводим все карточки из массива на страницу
-const placesList = document.querySelector(".places__list");
-
-// Проходимся по массиву карточек и создаем их
-initialCards.forEach(function (cardData) {
-  const cardElement = createCard(cardData, deleteCard, openCardModal);
-  placesList.appendChild(cardElement);
-});
 
 //МОДАЛЬНЫЕ ОКНА
 // Выбираем элементы на которых будут срабатываться клики
@@ -185,4 +175,311 @@ const validationSettings = {
 // Включаем валидацию форм
 document.addEventListener("DOMContentLoaded", function () {
   enableValidation(validationSettings);
+});
+
+// API
+
+const config = {
+  baseUrl: `https://nomoreparties.co/v1/wff-cohort-11`,
+  headers: {
+    authorization: "51705837-ea35-4c95-a31a-eba25806c2aa",
+    "Content-Type": "application/json",
+  },
+};
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Создаем промисы для запросов к серверу
+  const userPromise = fetch(`${config.baseUrl}/users/me`, {
+    headers: config.headers,
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error(`Ошибка: ${response.status}`);
+    }
+    return response.json();
+  });
+
+  const cardsPromise = fetch(`${config.baseUrl}/cards`, {
+    headers: config.headers,
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error(`Ошибка: ${response.status}`);
+    }
+    return response.json();
+  });
+
+  // Объединяем запросы в Promise.all()
+  Promise.all([userPromise, cardsPromise])
+    .then(([userData, cardsData]) => {
+      // Используем полученные данные для заполнения элементов на странице
+      const userNameElement = document.querySelector(".profile__title");
+      const userAboutElement = document.querySelector(".profile__description");
+      const userAvatarElement = document.querySelector(".profile__image");
+
+      userNameElement.textContent = userData.name;
+      userAboutElement.textContent = userData.about;
+      userAvatarElement.style.backgroundImage = `url(${userData.avatar})`;
+
+      // Выводим карточки из массива на страницу
+      const placesList = document.querySelector(".places__list");
+      cardsData.forEach((cardData) => {
+        const cardElement = createCard(
+          cardData,
+          deleteCard, // Передаем функцию удаления карточки
+          null,
+          userData._id
+        );
+        placesList.appendChild(cardElement);
+      });
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+});
+
+// РЕДАКТИРОВАНИЯ ПРОФИЛЯ
+
+const formElement = document.querySelector(".popup__form");
+// Находим поля ввода имени и описания
+const newNameInput = document.querySelector(".popup__input_type_name");
+const newDescriptionInput = document.querySelector(
+  ".popup__input_type_description"
+);
+
+// Добавляем обработчик события отправки формы
+formElement.addEventListener("submit", function (event) {
+  event.preventDefault(); // Предотвращаем стандартное поведение отправки формы
+
+  // Получаем значения нового имени и описания из полей ввода
+  const newName = newNameInput.value;
+  const newDescription = newDescriptionInput.value;
+
+  // Отправляем PATCH-запрос на сервер
+  fetch(`${config.baseUrl}/users/me`, {
+    method: "PATCH",
+    headers: config.headers,
+    body: JSON.stringify({
+      name: newName,
+      about: newDescription,
+    }), // Преобразуем объект в строку JSON
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Ошибка: ${response.status}`);
+      }
+      return response.json(); // Преобразуем ответ сервера в JSON
+    })
+    .then((data) => {
+      // Обрабатываем успешный ответ сервера
+      console.log("Данные профиля успешно обновлены:", data);
+      // Устанавливаем новые значения в поля профиля
+      newNameInput.value = data.name;
+      newDescriptionInput.value = data.about;
+    })
+    .catch((error) => {
+      // Обрабатываем ошибки
+      console.error("Ошибка при обновлении данных профиля:", error);
+    });
+});
+
+// ДОБАВЛЕНИЕ НОВОЙ КАРТОЧКИ.
+const formElementNewCard = document.querySelector(
+  ".popup_type_new-card .popup__form"
+);
+
+formElementNewCard.addEventListener("submit", function (event) {
+  event.preventDefault();
+  // Проверяем, что форма является формой добавления новой карточки
+  if (event.target === formElementNewCard) {
+    const newCardInput = document.querySelector("#popup__input_type_card-name");
+    const newCardUrlData = document.querySelector("#popup__input_type_url");
+
+    // Получаем значения новой карточки из полей ввода
+    const newCard = newCardInput.value;
+    const newURL = newCardUrlData.value;
+
+    fetch(`${config.baseUrl}/cards`, {
+      method: "POST",
+      headers: config.headers,
+      body: JSON.stringify({
+        name: newCard,
+        link: newURL,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Ошибка: ${response.status}`);
+        }
+        return response.json(); // Преобразуем ответ сервера в JSON
+      })
+      .then((data) => {
+        // Обрабатываем успешный ответ сервера
+        console.log("Карточка успешно добавлена:", data);
+        // Устанавливаем новые значения в поля профиля
+        newCardInput.value = data.name;
+        newCardUrlData.value = data.link;
+        // Очищаем поля ввода
+        newCardInput.value = "";
+        newCardUrlData.value = "";
+      })
+      .catch((error) => {
+        // Обрабатываем ошибки
+        console.error("Ошибка при добавлении карточки:", error);
+      });
+  }
+});
+
+// Функция удаления карточки с сервера
+export function deleteCardFromServer(cardId) {
+  const deleteCardUrl = `https://nomoreparties.co/v1/wff-cohort-11/cards/${cardId}`;
+
+  return fetch(deleteCardUrl, {
+    method: "DELETE",
+    headers: config.headers,
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Ошибка: ${response.status}`);
+      }
+      return response.json();
+    })
+    .catch((error) => {
+      console.error("Ошибка при удалении карточки:", error);
+    });
+}
+
+// Функция для отправки PUT-запроса на сервер для лайка карточки
+export function likeCard(cardId) {
+  const likeUrl = `https://nomoreparties.co/v1/wff-cohort-11/cards/likes/${cardId}`;
+
+  return fetch(likeUrl, {
+    method: "PUT",
+    headers: config.headers,
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Ошибка: ${response.status}`);
+      }
+      return response.json();
+    })
+    .catch((error) => {
+      console.error("Ошибка при лайкинге карточки:", error);
+    });
+}
+
+// Функция для отправки DELETE-запроса на сервер для удаления лайка с карточки
+export function removeLikeFromCard(cardId) {
+  const likeUrl = `https://nomoreparties.co/v1/wff-cohort-11/cards/likes/${cardId}`;
+
+  return fetch(likeUrl, {
+    method: "DELETE",
+    headers: config.headers,
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Ошибка: ${response.status}`);
+      }
+      return response.json();
+    })
+    .catch((error) => {
+      console.error("Ошибка при удалении лайка с карточки:", error);
+    });
+}
+
+// Редактирование аватара.
+
+// Находим нужные элементы
+const profileImageContainer = document.querySelector(
+  ".profile__image-container"
+);
+const avatarPopup = document.querySelector(".popup_type_avatar");
+const closeButton = avatarPopup.querySelector(".popup__close");
+
+// Функция для открытия Popup
+function openAvatarPopup() {
+  avatarPopup.classList.add("popup_is-opened");
+}
+
+// Функция для закрытия Popup
+function closeAvatarPopup() {
+  avatarPopup.classList.remove("popup_is-opened");
+}
+
+// Добавляем слушатель события клика на элемент профиля
+profileImageContainer.addEventListener("click", openAvatarPopup);
+
+// Добавляем слушатель события клика на кнопку закрытия Popup
+closeButton.addEventListener("click", closeAvatarPopup);
+
+// Находим кнопку сохранить аватар
+const changeProfileImange = document.querySelector(
+  ".profile_save_new_image_button"
+);
+
+function updateAvatar(newAvatarUrl) {
+  const avatarUpdateUrl = `https://nomoreparties.co/v1/wff-cohort-11/users/me/avatar`; // URL для обновления аватара
+
+  // Отправка PATCH-запроса
+  fetch(avatarUpdateUrl, {
+    method: "PATCH", // Метод запроса
+    headers: config.headers,
+    body: JSON.stringify({ avatar: newAvatarUrl }), // Преобразование данных в формат JSON
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Ошибка: ${response.status}`);
+      }
+      return response.json(); // Преобразование ответа в формат JSON
+    })
+    .then((data) => {
+      console.log("Аватар успешно обновлен:", data);
+      // Обновляем отображение аватара на странице
+      const profileImage = document.querySelector(".profile__image");
+      profileImage.style.backgroundImage = `url(${newAvatarUrl})`;
+      // Очищаем поле ввода
+      avatarInput.value = "";
+      // Закрываем попап
+      closeAvatarPopup();
+    })
+    .catch((error) => {
+      console.error("Ошибка при обновлении аватара:", error);
+    });
+}
+
+// Находим поле ввода ссылки на новый аватар
+const avatarInput = document.querySelector(".popup__input_type_avatar_url");
+
+// Добавляем обработчик события клика на кнопку "Сохранить" для смены аватара
+changeProfileImange.addEventListener("click", function () {
+  const newAvatarUrl = avatarInput.value.trim(); // Получаем значение ссылки на новый аватар и удаляем лишние пробелы
+
+  if (newAvatarUrl) {
+    updateAvatar(newAvatarUrl); // Вызываем функцию обновления аватара
+  } else {
+    console.error("Поле ссылки на аватар не может быть пустым");
+  }
+});
+
+// Улучшенный UX
+document.addEventListener("DOMContentLoaded", function () {
+  const saveButtons = document.querySelectorAll(".save_button");
+
+  function setLoadingState(button) {
+    button.textContent = "Сохранение...";
+  }
+
+  function resetButtonState(button, originalText) {
+    setTimeout(() => {
+      button.textContent = originalText;
+    }, 300); // Включаем resetButtonState через 0.3 секунды
+  }
+
+  saveButtons.forEach(function (button) {
+    button.addEventListener("click", function () {
+      const originalText = button.textContent;
+      setLoadingState(button);
+
+      // Используем замыкание для передачи originalText внутри setTimeout
+      resetButtonState(button, originalText);
+    });
+  });
 });

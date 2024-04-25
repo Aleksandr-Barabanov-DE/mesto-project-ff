@@ -21,10 +21,14 @@
       </header>
       <main class="content">
         <section class="profile page__section">
-          <div
-            class="profile__image"
-            style="background-image: url('<%=require('./images/avatar.jpg')%>')"
-          ></div>
+          <div class="profile__image-container">
+            <div
+              class="profile__image"
+              style="
+                background-image: url('<%=require('./images/avatar.jpg')%>');
+              "
+            ></div>
+          </div>
           <div class="profile__info">
             <h1 class="profile__title">Жак-Ив Кусто</h1>
             <button class="profile__edit-button" type="button"></button>
@@ -79,7 +83,10 @@
             <span
               class="form__input-error popup__input_type_description-error"
             ></span>
-            <button type="submit" class="button popup__button">
+            <button
+              type="submit"
+              class="button popup__button save_button profile__edit-button"
+            >
               Сохранить
             </button>
           </form>
@@ -169,7 +176,10 @@
         <button type="button" class="card__delete-button"></button>
         <div class="card__description">
           <h2 class="card__title"></h2>
-          <button type="button" class="card__like-button"></button>
+          <div class="likes-container">
+            <button type="button" class="card__like-button"></button>
+            <span class="card__like-count">0</span>
+          </div>
         </div>
       </li>
     </template>
