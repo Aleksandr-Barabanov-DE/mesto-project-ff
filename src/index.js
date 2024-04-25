@@ -142,6 +142,9 @@ formEditProfile.addEventListener("submit", submitFormEditProfile);
 addCardPopup.addEventListener("submit", addNewCard);
 
 // ДОБАВЛЕНИЕ НОВЫХ КАРТОЧЕК
+document.addEventListener("DOMContentLoaded", function () {
+  // Ваш скрипт здесь
+});
 export function addNewCard(evt) {
   evt.preventDefault(); // Отменяем стандартное поведение формы
 
@@ -180,4 +183,6 @@ const validationSettings = {
 };
 
 // Включаем валидацию форм
-enableValidation(validationSettings);
+document.addEventListener("DOMContentLoaded", function () {
+  enableValidation(validationSettings);
+});

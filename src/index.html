@@ -60,7 +60,7 @@
               required
               data-error="name-error"
               pattern="^[a-zA-Zа-яА-ЯёЁ\s\-]*$"
-              title="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
+              data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
             />
             <span class="form__input-error popup__input_type_name-error"></span>
             <input
@@ -74,7 +74,7 @@
               required
               data-error="description-error"
               pattern="^[a-zA-Zа-яА-ЯёЁ\s\-]*$"
-              title="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
+              data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
             />
             <span
               class="form__input-error popup__input_type_description-error"
@@ -89,33 +89,31 @@
         <div class="popup__content">
           <button type="button" class="popup__close"></button>
           <h3 class="popup__title">Новое место</h3>
-          <form
-            class="popup__form form_add-new-place"
-            name="new-place"
-            novalidate
-          >
+          <form class="popup__form" name="new-place" novalidate>
             <input
-              id="popup__input_type_new_place"
+              id="popup__input_type_card-name"
               type="text"
               name="place-name"
               class="popup__input popup__input_type_card-name"
               placeholder="Название"
-              required
               minlength="2"
               maxlength="30"
-              data-error="new-place-error"
               pattern="^[a-zA-Zа-яА-ЯёЁ\s\-]*$"
-              title="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
+              data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
+              required
             />
-            <span class="form__input-error popup__input_type_card-error"></span>
+            <span
+              class="form__input-error popup__input_type_card-name-error"
+            ></span>
             <input
               id="popup__input_type_url"
               type="url"
               name="link"
               class="popup__input popup__input_type_url"
               placeholder="Ссылка на картинку"
+              data-error="url-error"
+              data-error-message="Введите адрес сайта"
               required
-              title="Введите адрес сайта"
             />
             <span class="form__input-error popup__input_type_url-error"></span>
             <button type="submit" class="button popup__button">

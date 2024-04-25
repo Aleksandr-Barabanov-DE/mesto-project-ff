@@ -70,7 +70,7 @@ const setEventListeners = (formElement) => {
   // Обойдём все элементы полученной коллекции
   inputList.forEach((inputElement) => {
     // каждому полю добавим обработчик события input
-    inputElement.addEventListener("input", () => {
+    inputElement.addEventListener("input", function() => {
       // Внутри колбэка вызовем isValid,
       // передав ей форму и проверяемый элемент
       isValid(formElement, inputElement);
