@@ -314,7 +314,7 @@ formElementNewCard.addEventListener("submit", function (event) {
       .then((data) => {
         // Обрабатываем успешный ответ сервера
         console.log("Карточка успешно добавлена:", data);
-        // Устанавливаем новые значения в поля профиля
+        // Устанавливаем новые значения в поля
         newCardInput.value = data.name;
         newCardUrlData.value = data.link;
         // Очищаем поля ввода
