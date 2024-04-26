@@ -19,28 +19,26 @@ import {
 //МОДАЛЬНЫЕ ОКНА
 // Выбираем элементы на которых будут срабатываться клики
 const formEditProfile = document.querySelector(".form_edit-profile");
-const editProfileButton = document.querySelector(".profile__edit-button");
-const addNewCardButton = document.querySelector(".profile__add-button");
-const openCardImage = document.querySelectorAll(".card__image");
+const buttonOpenPopupProfile = document.querySelector(".profile__edit-button");
+const buttonAddNewCard = document.querySelector(".profile__add-button");
 
 // Кнопка закрытия
 const buttonsClosePopup = document.querySelectorAll(".popup__close");
 
 // Выделяем три разных Popup
 const popupEditProfile = document.querySelector(".popup_type_edit");
-const addCardPopup = document.querySelector(".popup_type_new-card");
+const popupAddCard = document.querySelector(".popup_type_new-card");
 const currentCardPopup = document.querySelector(".popup_type_image");
 
-addNewCardButton.addEventListener("click", function () {
+buttonAddNewCard.addEventListener("click", function () {
   // В качестве аргумента нужный Popup
-  openPopup(addCardPopup);
+  openPopup(popupAddCard);
 });
 
 // Механизм Открытие popup карточек
 function openPopupCard(popup, imageUrl, captionText) {
   const popupImage = popup.querySelector(".popup__image");
   const popupCaption = popup.querySelector(".popup__caption");
-
   // Устанавливаем src изображения и текст подписи
   popupImage.src = imageUrl;
   popupImage.alt = captionText;
@@ -75,101 +73,6 @@ popupContents.forEach(function (content) {
     event.stopPropagation();
   });
 });
-
-// Редактирование Ииени и информации о себе
-
-// Находим форму Popup в DOM
-
-const nameInput = document.querySelector(".popup__input_type_name");
-const descriptionInput = document.querySelector(
-  ".popup__input_type_description"
-);
-
-// Функция установки значений полей формы редактирования профиля
-function setProfileFormValues(name, description) {
-  // Устанавливаем значения полей формы
-  nameInput.value = name;
-  descriptionInput.value = description;
-}
-
-// Обработчик открытия формы редактирования профиля
-editProfileButton.addEventListener("click", function () {
-  // Получаем значения имени и описания из профиля
-  const profileName = document.querySelector(".profile__title").textContent;
-  const profileDescription = document.querySelector(
-    ".profile__description"
-  ).textContent;
-
-  // Устанавливаем значения полей формы
-  setProfileFormValues(profileName, profileDescription);
-
-  // Открываем модальное окно редактирования профиля
-  openPopup(popupEditProfile);
-
-  // Очищаем ошибки валидации для формы профиля и делаем кнопку неактивной
-  clearValidation(formEditProfile, validationSettings);
-});
-
-function submitFormEditProfile(evt) {
-  evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы.
-
-  // Получаем значения полей имени и описания
-  const nameInputValue = nameInput.value;
-  const descriptionInputValue = descriptionInput.value; // Исправленное имя переменной
-
-  // Находим элементы, куда нужно вставить значения
-  const nameInputDestination = document.querySelector(".profile__title");
-  const descriptionInputDestination = document.querySelector(
-    ".profile__description"
-  );
-
-  // Вставляем новые значения
-  nameInputDestination.textContent = nameInputValue;
-  descriptionInputDestination.textContent = descriptionInputValue;
-
-  // Закрываем модальное окно
-  closePopup(popupEditProfile);
-}
-
-// Прикрепляем обработчик к форме:
-// он будет следить за событием “submit” - «отправка»
-formEditProfile.addEventListener("submit", submitFormEditProfile);
-
-// добавление новой карточки
-addCardPopup.addEventListener("submit", addNewCard);
-
-// ДОБАВЛЕНИЕ НОВЫХ КАРТОЧЕК
-
-document.addEventListener("DOMContentLoaded", function () {
-  // Ваш скрипт здесь
-});
-
-export function addNewCard(evt) {
-  evt.preventDefault(); // Отменяем стандартное поведение формы
-  const placesList = document.querySelector(".places__list");
-
-  // Находим поля добавления карточек
-  const newCardName = document.querySelector(
-    ".popup__input_type_card-name"
-  ).value;
-  const newCardUrl = document.querySelector(".popup__input_type_url").value;
-
-  // Создаем данные для новой карточки
-  const newCardData = {
-    name: newCardName,
-    link: newCardUrl,
-  };
-
-  // Создаем новую карточку с использованием функции createCard
-  const newCardElement = createCard(newCardData, deleteCard);
-
-  // Вставляем новую карточку в начало контейнера
-  placesList.prepend(newCardElement);
-
-  // Закрываем диалоговое окно
-  const addCardPopup = document.querySelector(".popup_type_new-card");
-  closePopup(addCardPopup);
-}
 
 //Валидация ФОРМ
 
@@ -257,20 +160,51 @@ function resetButtonState(button, originalText) {
 }
 
 // РЕДАКТИРОВАНИЯ ПРОФИЛЯ
-
+// Находим форму Popup в DOM
+const nameInput = document.querySelector(".popup__input_type_name");
+const descriptionInput = document.querySelector(
+  ".popup__input_type_description"
+);
 const formElement = document.querySelector(".popup__form");
-// Находим поля ввода имени и описания
 const newNameInput = document.querySelector(".popup__input_type_name");
 const newDescriptionInput = document.querySelector(
   ".popup__input_type_description"
 );
 const profileSaveButton = document.querySelector(".profile__edit-button");
-// Добавляем обработчик события отправки формы
+const profileName = document.querySelector(".profile__title").textContent;
 
+// Функция установки значений полей формы редактирования профиля
+function setProfileFormValues(name, description) {
+  // Устанавливаем значения полей формы
+  nameInput.value = name;
+  descriptionInput.value = description;
+}
+
+// Функция открытия формы редактирования профиля
+function openEditProfileForm() {
+  // Получаем значения имени и описания из профиля
+
+  const profileDescription = document.querySelector(
+    ".profile__description"
+  ).textContent;
+
+  // Устанавливаем значения полей формы
+  setProfileFormValues(profileName, profileDescription);
+
+  // Открываем модальное окно редактирования профиля
+  openPopup(popupEditProfile);
+
+  // Очищаем ошибки валидации для формы профиля и делаем кнопку неактивной
+  clearValidation(formEditProfile, validationSettings);
+}
+
+// Обработчик открытия формы редактирования профиля
+buttonOpenPopupProfile.addEventListener("click", openEditProfileForm);
+
+// Обработчик отправки формы редактирования профиля
 formElement.addEventListener("submit", function (event) {
   event.preventDefault(); // Предотвращаем стандартное поведение отправки формы
-  // Устанавливаем текст кнопки на "Сохранение..."
-  setLoadingState(profileSaveButton);
+  setLoadingState(profileSaveButton); // Устанавливаем текст кнопки на "Сохранение..."
 
   // Получаем значения нового имени и описания из полей ввода
   const newName = newNameInput.value;
@@ -281,6 +215,9 @@ formElement.addEventListener("submit", function (event) {
     .then((data) => {
       // Обрабатываем успешный ответ сервера
       console.log("Данные профиля успешно обновлены:", data);
+      // Обновляем имя пользователя на странице
+      const userNameElement = document.querySelector(".profile__title");
+      userNameElement.textContent = data.name;
       // Устанавливаем новые значения в поля профиля
       newNameInput.value = data.name;
       newDescriptionInput.value = data.about;

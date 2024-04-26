@@ -1,4 +1,4 @@
-//Общие настройки для api
+//Общие настройки для apicd
 const config = {
   baseUrl: `https://nomoreparties.co/v1/wff-cohort-11`,
   headers: {
