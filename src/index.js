@@ -132,11 +132,14 @@ formEditProfile.addEventListener("submit", submitFormEditProfile);
 addCardPopup.addEventListener("submit", addNewCard);
 
 // ДОБАВЛЕНИЕ НОВЫХ КАРТОЧЕК
+
 document.addEventListener("DOMContentLoaded", function () {
   // Ваш скрипт здесь
 });
+
 export function addNewCard(evt) {
   evt.preventDefault(); // Отменяем стандартное поведение формы
+  const placesList = document.querySelector(".places__list");
 
   // Находим поля добавления карточек
   const newCardName = document.querySelector(
@@ -457,29 +460,4 @@ changeProfileImange.addEventListener("click", function () {
   } else {
     console.error("Поле ссылки на аватар не может быть пустым");
   }
-});
-
-// Улучшенный UX
-document.addEventListener("DOMContentLoaded", function () {
-  const saveButtons = document.querySelectorAll(".save_button");
-
-  function setLoadingState(button) {
-    button.textContent = "Сохранение...";
-  }
-
-  function resetButtonState(button, originalText) {
-    setTimeout(() => {
-      button.textContent = originalText;
-    }, 300); // Включаем resetButtonState через 0.3 секунды
-  }
-
-  saveButtons.forEach(function (button) {
-    button.addEventListener("click", function () {
-      const originalText = button.textContent;
-      setLoadingState(button);
-
-      // Используем замыкание для передачи originalText внутри setTimeout
-      resetButtonState(button, originalText);
-    });
-  });
 });

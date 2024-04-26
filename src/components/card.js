@@ -33,7 +33,7 @@ export function createCard(
   cardTitle.textContent = data.name;
 
   // Проверяем, является ли текущий пользователь владельцем карточки
-  if (data.owner._id !== userId) {
+  if (data.owner && data.owner._id !== userId) {
     // Если текущий пользователь не владелец, скрываем кнопку удаления
     deleteButton.style.display = "none";
   }
