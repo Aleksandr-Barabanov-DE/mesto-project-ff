@@ -8,6 +8,13 @@ import {
 } from "./components/modal.js";
 import { createCard, deleteCard } from "./components/card.js";
 import { clearValidation, enableValidation } from "./components/validation.js";
+import {
+  getUserInfo,
+  updateUserInfo,
+  getCards,
+  addNewCardApi,
+  updateAvatarApi,
+} from "./components/api.js";
 
 //МОДАЛЬНЫЕ ОКНА
 // Выбираем элементы на которых будут срабатываться клики
@@ -42,7 +49,7 @@ function openPopupCard(popup, imageUrl, captionText) {
   openPopup(popup);
 }
 
-function openCardModal(imageUrl, captionText) {
+export function openCardModal(imageUrl, captionText) {
   openPopupCard(currentCardPopup, imageUrl, captionText);
 }
 
@@ -181,7 +188,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // API
-
 const config = {
   baseUrl: `https://nomoreparties.co/v1/wff-cohort-11`,
   headers: {
@@ -239,6 +245,17 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+// Изменение текста кнопок
+function setLoadingState(button) {
+  console.log("Кнопка изменена на 'Сохранение...'");
+  button.textContent = "Сохранение..."; // Изменяем текст кнопки на "Сохранение..."
+}
+
+function resetButtonState(button, originalText) {
+  console.log("Кнопка изменена на исходный текст");
+  button.textContent = originalText; // Возвращаем текст кнопки к изначальному состоянию
+}
+
 // РЕДАКТИРОВАНИЯ ПРОФИЛЯ
 
 const formElement = document.querySelector(".popup__form");
@@ -247,30 +264,20 @@ const newNameInput = document.querySelector(".popup__input_type_name");
 const newDescriptionInput = document.querySelector(
   ".popup__input_type_description"
 );
-
+const profileSaveButton = document.querySelector(".profile__edit-button");
 // Добавляем обработчик события отправки формы
+
 formElement.addEventListener("submit", function (event) {
   event.preventDefault(); // Предотвращаем стандартное поведение отправки формы
+  // Устанавливаем текст кнопки на "Сохранение..."
+  setLoadingState(profileSaveButton);
 
   // Получаем значения нового имени и описания из полей ввода
   const newName = newNameInput.value;
   const newDescription = newDescriptionInput.value;
 
   // Отправляем PATCH-запрос на сервер
-  fetch(`${config.baseUrl}/users/me`, {
-    method: "PATCH",
-    headers: config.headers,
-    body: JSON.stringify({
-      name: newName,
-      about: newDescription,
-    }), // Преобразуем объект в строку JSON
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Ошибка: ${response.status}`);
-      }
-      return response.json(); // Преобразуем ответ сервера в JSON
-    })
+  updateUserInfo(newName, newDescription)
     .then((data) => {
       // Обрабатываем успешный ответ сервера
       console.log("Данные профиля успешно обновлены:", data);
@@ -281,6 +288,11 @@ formElement.addEventListener("submit", function (event) {
     .catch((error) => {
       // Обрабатываем ошибки
       console.error("Ошибка при обновлении данных профиля:", error);
+      resetButtonState(profileSaveButton, "Сохранить");
+    })
+    .finally(() => {
+      // Возвращаем исходный текст кнопки
+      resetButtonState(profileSaveButton, "Сохранить");
     });
 });
 
@@ -289,6 +301,8 @@ const formElementNewCard = document.querySelector(
   ".popup_type_new-card .popup__form"
 );
 
+const saveNewPlaceButton = document.querySelector(".new_place_save-button");
+
 formElementNewCard.addEventListener("submit", function (event) {
   event.preventDefault();
   // Проверяем, что форма является формой добавления новой карточки
@@ -296,24 +310,12 @@ formElementNewCard.addEventListener("submit", function (event) {
     const newCardInput = document.querySelector("#popup__input_type_card-name");
     const newCardUrlData = document.querySelector("#popup__input_type_url");
 
+    setLoadingState(saveNewPlaceButton);
     // Получаем значения новой карточки из полей ввода
     const newCard = newCardInput.value;
     const newURL = newCardUrlData.value;
 
-    fetch(`${config.baseUrl}/cards`, {
-      method: "POST",
-      headers: config.headers,
-      body: JSON.stringify({
-        name: newCard,
-        link: newURL,
-      }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Ошибка: ${response.status}`);
-        }
-        return response.json(); // Преобразуем ответ сервера в JSON
-      })
+    addNewCardApi(newCard, newURL)
       .then((data) => {
         // Обрабатываем успешный ответ сервера
         console.log("Карточка успешно добавлена:", data);
@@ -327,15 +329,18 @@ formElementNewCard.addEventListener("submit", function (event) {
       .catch((error) => {
         // Обрабатываем ошибки
         console.error("Ошибка при добавлении карточки:", error);
+        resetButtonState(saveNewPlaceButton, "Сохранить");
+      })
+      .finally(() => {
+        // Возвращаем исходный текст кнопки
+        resetButtonState(saveNewPlaceButton, "Сохранить");
       });
   }
 });
 
 // Функция удаления карточки с сервера
 export function deleteCardFromServer(cardId) {
-  const deleteCardUrl = `https://nomoreparties.co/v1/wff-cohort-11/cards/${cardId}`;
-
-  return fetch(deleteCardUrl, {
+  return fetch(`${config.baseUrl}/cards/${cardId}`, {
     method: "DELETE",
     headers: config.headers,
   })
@@ -352,9 +357,7 @@ export function deleteCardFromServer(cardId) {
 
 // Функция для отправки PUT-запроса на сервер для лайка карточки
 export function likeCard(cardId) {
-  const likeUrl = `https://nomoreparties.co/v1/wff-cohort-11/cards/likes/${cardId}`;
-
-  return fetch(likeUrl, {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: "PUT",
     headers: config.headers,
   })
@@ -371,9 +374,7 @@ export function likeCard(cardId) {
 
 // Функция для отправки DELETE-запроса на сервер для удаления лайка с карточки
 export function removeLikeFromCard(cardId) {
-  const likeUrl = `https://nomoreparties.co/v1/wff-cohort-11/cards/likes/${cardId}`;
-
-  return fetch(likeUrl, {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: "DELETE",
     headers: config.headers,
   })
@@ -400,11 +401,13 @@ const closeButton = avatarPopup.querySelector(".popup__close");
 // Функция для открытия Popup
 function openAvatarPopup() {
   avatarPopup.classList.add("popup_is-opened");
+  document.addEventListener("keydown", closePopupOnEsc);
 }
 
 // Функция для закрытия Popup
 function closeAvatarPopup() {
   avatarPopup.classList.remove("popup_is-opened");
+  document.removeEventListener("keydown", closePopupOnEsc);
 }
 
 // Добавляем слушатель события клика на элемент профиля
@@ -419,20 +422,8 @@ const changeProfileImange = document.querySelector(
 );
 
 function updateAvatar(newAvatarUrl) {
-  const avatarUpdateUrl = `https://nomoreparties.co/v1/wff-cohort-11/users/me/avatar`; // URL для обновления аватара
-
   // Отправка PATCH-запроса
-  fetch(avatarUpdateUrl, {
-    method: "PATCH", // Метод запроса
-    headers: config.headers,
-    body: JSON.stringify({ avatar: newAvatarUrl }), // Преобразование данных в формат JSON
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Ошибка: ${response.status}`);
-      }
-      return response.json(); // Преобразование ответа в формат JSON
-    })
+  updateAvatarApi(newAvatarUrl)
     .then((data) => {
       console.log("Аватар успешно обновлен:", data);
       // Обновляем отображение аватара на странице
@@ -440,11 +431,14 @@ function updateAvatar(newAvatarUrl) {
       profileImage.style.backgroundImage = `url(${newAvatarUrl})`;
       // Очищаем поле ввода
       avatarInput.value = "";
+      resetButtonState(changeProfileImange, "Сохранить");
       // Закрываем попап
       closeAvatarPopup();
     })
     .catch((error) => {
       console.error("Ошибка при обновлении аватара:", error);
+      // Возвращаем исходный текст кнопки в случае ошибки
+      resetButtonState(changeProfileImange, "Сохранить");
     });
 }
 
@@ -456,6 +450,7 @@ changeProfileImange.addEventListener("click", function () {
   const newAvatarUrl = avatarInput.value.trim(); // Получаем значение ссылки на новый аватар и удаляем лишние пробелы
 
   if (newAvatarUrl) {
+    setLoadingState(changeProfileImange); // Устанавливаем текст кнопки на "Сохранение..."
     updateAvatar(newAvatarUrl); // Вызываем функцию обновления аватара
   } else {
     console.error("Поле ссылки на аватар не может быть пустым");
