@@ -77,3 +77,54 @@ export const updateAvatarApi = (newAvatarUrl) => {
     return response.json();
   });
 };
+
+// Функция удаления карточки с сервера
+export function deleteCardFromServer(cardId) {
+  return fetch(`${config.baseUrl}/cards/${cardId}`, {
+    method: "DELETE",
+    headers: config.headers,
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Ошибка: ${response.status}`);
+      }
+      return response.json();
+    })
+    .catch((error) => {
+      console.error("Ошибка при удалении карточки:", error);
+    });
+}
+
+// Функция для отправки PUT-запроса на сервер для лайка карточки
+export function likeCard(cardId) {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
+    method: "PUT",
+    headers: config.headers,
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Ошибка: ${response.status}`);
+      }
+      return response.json();
+    })
+    .catch((error) => {
+      console.error("Ошибка при лайкинге карточки:", error);
+    });
+}
+
+// Функция для отправки DELETE-запроса на сервер для удаления лайка с карточки
+export function removeLikeFromCard(cardId) {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
+    method: "DELETE",
+    headers: config.headers,
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Ошибка: ${response.status}`);
+      }
+      return response.json();
+    })
+    .catch((error) => {
+      console.error("Ошибка при удалении лайка с карточки:", error);
+    });
+}

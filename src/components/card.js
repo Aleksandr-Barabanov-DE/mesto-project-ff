@@ -1,8 +1,10 @@
 import { closePopup, openPopup } from "./modal";
 import { deleteCardFromServer } from "../index";
-import { likeCard } from "../index.js";
-import { removeLikeFromCard } from "../index.js";
+import { likeCard } from "./api.js";
+import { removeLikeFromCard } from "./api.js";
 import { openCardModal } from "../index.js";
+
+import { openDeleteConfirmation } from "../index.js";
 
 export function handleLikeButtonClick(likeButton) {
   likeButton.classList.toggle("card__like-button_is-active");
@@ -40,29 +42,7 @@ export function createCard(
   }
 
   deleteButton.addEventListener("click", function () {
-    // Получаем ID карточки
-    const cardId = data._id;
-    // Находим модальное окно подтверждения
-    const confirmPopup = document.querySelector(".popup_type_confirm");
-    // Открываем модальное окно подтверждения
-    openPopup(confirmPopup);
-
-    // Добавляем обработчик клика на кнопку "Да" в подтверждающем popup'е
-    const confirmButton = confirmPopup.querySelector(".popup__button");
-    confirmButton.addEventListener("click", handleConfirmButtonClick);
-
-    // Объявляем функцию обработчика клика на кнопку "Да"
-    function handleConfirmButtonClick() {
-      // Удаляем карточку, передавая ее ID
-      deleteCardFromServer(cardId).then(() => {
-        // Удаляем карточку из DOM
-        deleteCard(cardElement);
-        // Закрываем подтверждающий popup
-        closePopup(confirmPopup);
-        // Удаляем обработчик клика на кнопку "Да"
-        confirmButton.removeEventListener("click", handleConfirmButtonClick);
-      });
-    }
+    openDeleteConfirmation(data._id, cardElement);
   });
 
   // Добавляем обработчик клика на изображение
