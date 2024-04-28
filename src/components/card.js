@@ -1,11 +1,3 @@
-import { closePopup, openPopup } from "./modal";
-import { deleteCardFromServer } from "../index";
-import { likeCard } from "./api.js";
-import { removeLikeFromCard } from "./api.js";
-import { openCardModal } from "../index.js";
-
-import { openDeleteConfirmation } from "../index.js";
-
 export function handleLikeButtonClick(likeButton) {
   likeButton.classList.toggle("card__like-button_is-active");
 }
@@ -14,7 +6,9 @@ export function handleLikeButtonClick(likeButton) {
 export function createCard(
   data,
   deleteCallback,
-  openCardModalCallback,
+  openCardModal,
+  likeButtonClickCallback,
+  removeLikeButtonClickCallback,
   userId
 ) {
   // Клонируем шаблон карточки
@@ -42,7 +36,7 @@ export function createCard(
   }
 
   deleteButton.addEventListener("click", function () {
-    openDeleteConfirmation(data._id, cardElement);
+    deleteCallback(data._id, cardElement);
   });
 
   // Добавляем обработчик клика на изображение
@@ -62,28 +56,10 @@ export function createCard(
     // Отправляем запрос на сервер для установки или снятия лайка в зависимости от текущего состояния кнопки
     if (isLiked) {
       // Если лайк уже установлен, отправляем DELETE-запрос для его снятия
-      removeLikeFromCard(cardId)
-        .then((updatedData) => {
-          // Обновляем количество лайков на карточке
-          likeCount.textContent = updatedData.likes.length;
-          // Убираем класс активности кнопки "лайк"
-          handleLikeButtonClick(likeButton);
-        })
-        .catch((error) => {
-          console.error("Ошибка при удалении лайка с карточки:", error);
-        });
+      removeLikeButtonClickCallback(cardId, likeButton);
     } else {
       // Если лайк не установлен, отправляем PUT-запрос для его установки
-      likeCard(cardId)
-        .then((updatedData) => {
-          // Обновляем количество лайков на карточке
-          likeCount.textContent = updatedData.likes.length;
-          // Устанавливаем класс активности кнопки "лайк"
-          handleLikeButtonClick(likeButton);
-        })
-        .catch((error) => {
-          console.error("Ошибка при лайкинге карточки:", error);
-        });
+      likeButtonClickCallback(cardId, likeButton);
     }
   });
 
