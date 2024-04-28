@@ -251,6 +251,8 @@ formElement.addEventListener("submit", function (event) {
       // Обновляем данные профиля на странице
       profileNameElement.textContent = data.name;
       profileDescriptionElement.textContent = data.about;
+      // Закрываем модальное окно редактирования профиля
+      closePopup(popupEditProfile);
     })
     .catch((error) => {
       // Обрабатываем ошибки
@@ -259,8 +261,6 @@ formElement.addEventListener("submit", function (event) {
     .finally(() => {
       // Возвращаем исходный текст кнопки
       resetButtonState(profileSaveButton, "Сохранить");
-      // Закрываем модальное окно редактирования профиля
-      closePopup(popupEditProfile);
     });
 });
 
@@ -321,12 +321,13 @@ formElementNewCard.addEventListener("submit", function (event) {
 });
 
 // УДАЛЕНИЕ КАРТОЧЕК!!!
+const confirmPopup = document.querySelector(".popup_type_confirm");
 
 // Функция открытия модального окна подтверждения удаления карточки
 export function openDeleteConfirmation(cardId, cardElement) {
   cardToDeleteId = cardId;
   cardToDeleteElement = cardElement;
-  const confirmPopup = document.querySelector(".popup_type_confirm");
+
   openPopup(confirmPopup);
 }
 
@@ -340,7 +341,7 @@ function handleConfirmButtonClick() {
     deleteCardFromServer(cardToDeleteId)
       .then(() => {
         deleteCard(cardToDeleteElement);
-        closePopup(document.querySelector(".popup_type_confirm"));
+        closePopup(confirmPopup);
         // Сброс переменных после удаления карточки
         cardToDeleteId = null;
         cardToDeleteElement = null;
