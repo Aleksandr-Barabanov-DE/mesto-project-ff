@@ -30,9 +30,9 @@
             ></div>
           </div>
           <div class="profile__info">
-            <h1 class="profile__title">Жак-Ив Кусто</h1>
+            <h1 class="profile__title">Aleksandr Barabanov</h1>
             <button class="profile__edit-button" type="button"></button>
-            <p class="profile__description">Исследователь океана</p>
+            <p class="profile__description">Frontend Developer</p>
           </div>
           <button class="profile__add-button" type="button"></button>
         </section>
@@ -46,7 +46,7 @@
       <div class="popup popup_type_edit">
         <div class="popup__content">
           <button type="button" class="popup__close"></button>
-          <h3 class="popup__title">Редактировать профиль</h3>
+          <h3 class="popup__title">Edit profile</h3>
           <form
             class="popup__form form_edit-profile"
             name="edit-profile"
@@ -64,7 +64,7 @@
               required
               data-error="name-error"
               pattern="^[a-zA-Zа-яА-ЯёЁ\s\-]*$"
-              data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
+              data-error-message="Only Latin, Cyrillic letters, hyphens and spaces are allowed"
             />
             <span class="form__input-error popup__input_type_name-error"></span>
             <input
@@ -78,7 +78,7 @@
               required
               data-error="description-error"
               pattern="^[a-zA-Zа-яА-ЯёЁ\s\-]*$"
-              data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
+              data-error-message="Only Latin, Cyrillic letters, hyphens and spaces are allowed"
             />
             <span
               class="form__input-error popup__input_type_description-error"
@@ -87,7 +87,7 @@
               type="submit"
               class="button popup__button save_button profile__edit-button"
             >
-              Сохранить
+              Save
             </button>
           </form>
         </div>
@@ -95,18 +95,18 @@
       <div class="popup popup_type_new-card">
         <div class="popup__content">
           <button type="button" class="popup__close"></button>
-          <h3 class="popup__title">Новое место</h3>
+          <h3 class="popup__title">New place</h3>
           <form class="popup__form" name="new-place" novalidate>
             <input
               id="popup__input_type_card-name"
               type="text"
               name="place-name"
               class="popup__input popup__input_type_card-name"
-              placeholder="Название"
+              placeholder="Name"
               minlength="2"
               maxlength="30"
               pattern="^[a-zA-Zа-яА-ЯёЁ\s\-]*$"
-              data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
+              data-error-message="Only Latin, Cyrillic letters, hyphens and spaces are allowed"
               required
             />
             <span
@@ -117,7 +117,7 @@
               type="url"
               name="link"
               class="popup__input popup__input_type_url"
-              placeholder="Ссылка на картинку"
+              placeholder="Link"
               data-error="url-error"
               data-error-message="Введите адрес сайта"
               required
@@ -127,7 +127,7 @@
               type="submit"
               class="button popup__button save_button new_place_save-button"
             >
-              Сохранить
+              Save
             </button>
           </form>
         </div>
@@ -136,9 +136,9 @@
       <div class="popup popup_type_confirm">
         <div class="popup__content">
           <button type="button" class="popup__close"></button>
-          <h3 class="popup__title">Вы уверены?</h3>
+          <h3 class="popup__title">Are you sure?</h3>
           <button type="button" class="button popup__button confirm__button">
-            Да
+            Yes
           </button>
         </div>
       </div>
@@ -146,14 +146,14 @@
       <div class="popup popup_type_avatar">
         <div class="popup__content">
           <button type="button" class="popup__close"></button>
-          <h3 class="popup__title avatar_title">Обновить Аватар</h3>
+          <h3 class="popup__title avatar_title">Update Avatar</h3>
           <form class="popup__form" name="new-avatar" novalidate>
             <input
               id="popup__input_type_url"
               type="url"
               name="link"
               class="popup__input popup__input_type_avatar_url"
-              placeholder="Ссылка на картинку"
+              placeholder="Picture link"
               required
             />
             <span class="form__input-error popup__input_type_url-error"></span>
@@ -161,7 +161,7 @@
               type="button"
               class="button popup__button profile_save_new_image_button save_button"
             >
-              Сохранить
+              Save
             </button>
           </form>
         </div>
