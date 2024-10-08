@@ -31,7 +31,7 @@ npm install
 
 Start the application:
 
-npm start
+npm run build
 
 Usage
 After starting the application, open your web browser and navigate to http://localhost:3000 (or the appropriate port). You can register or log in to start sharing your photos.
