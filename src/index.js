@@ -114,6 +114,21 @@ const config = {
   },
 };
 
+// If we need all users
+//   // Выводим карточки из массива на страницу
+//   cardsData.forEach((cardData) => {
+//     const cardElement = createCard(
+//       cardData,
+//       openDeleteConfirmation, // Передаем функцию удаления карточки
+//       openCardModal, // Передаем функцию открытия модального окна с картинкой
+//       handleLikeButtonClick, // Передаем функцию для установки лайка
+//       handleRemoveLikeButtonClick, // Передаем функцию для снятия лайка
+//       userData._id
+//     );
+//     placesList.appendChild(cardElement);
+//   });
+// })
+
 document.addEventListener("DOMContentLoaded", function () {
   // Создаем промисы для запросов к серверу
   const userPromise = getUserInfo();
@@ -131,17 +146,19 @@ document.addEventListener("DOMContentLoaded", function () {
       userAboutElement.textContent = userData.about;
       userAvatarElement.style.backgroundImage = `url(${userData.avatar})`;
 
-      // Выводим карточки из массива на страницу
       cardsData.forEach((cardData) => {
-        const cardElement = createCard(
-          cardData,
-          openDeleteConfirmation, // Передаем функцию удаления карточки
-          openCardModal, // Передаем функцию открытия модального окна с картинкой
-          handleLikeButtonClick, // Передаем функцию для установки лайка
-          handleRemoveLikeButtonClick, // Передаем функцию для снятия лайка
-          userData._id
-        );
-        placesList.appendChild(cardElement);
+        // Проверяем, что карточка принадлежит текущему пользователю
+        if (cardData.owner._id === userData._id) {
+          const cardElement = createCard(
+            cardData,
+            openDeleteConfirmation, // Передаем функцию удаления карточки
+            openCardModal, // Передаем функцию открытия модального окна с картинкой
+            handleLikeButtonClick, // Передаем функцию для установки лайка
+            handleRemoveLikeButtonClick, // Передаем функцию для снятия лайка
+            userData._id
+          );
+          placesList.appendChild(cardElement);
+        }
       });
     })
     .catch((error) => {
